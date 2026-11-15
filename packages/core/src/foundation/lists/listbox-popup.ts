@@ -4,6 +4,8 @@
 import { type AsyncOptionsStatus } from "./async-options"
 import { isDisabled, listStepKeys } from "./listbox-parts"
 import { flagWhileBound } from "../kernel/bound-keys"
+import { applyAttrs } from "../kernel/live"
+import { labelsOf } from "../forms/form"
 import { pressKeepsFocus } from "../focus/press-keeps-focus"
 import {
   type Anchor,
@@ -54,6 +56,8 @@ type ListPopupApi = {
   internal: ListContentInternal & {
     // What the list is placed against without an `anchor` prop.
     anchorElement: () => Anchor | undefined
+    // The field whose name the list takes while there's no label part.
+    inputElement: () => HTMLElement | undefined
     onListKeyDown: (event: KeyboardEvent) => void
   }
 }
@@ -78,9 +82,80 @@ const inputState = (state: FieldState) => ({
 const listId = (state: { listed: boolean }, id: string) =>
   `${id}-${state.listed ? "list" : "content"}`
 
-// The label names the list, or the field does while there's no label.
+// The label part names the list. Without one, whatever names the field names
+// the list too: a list labelled by the field itself would take the field's
+// text as its name, since an input names by its value.
 const listLabelledBy = (state: { labeled: boolean }, id: string) =>
-  state.labeled ? `${id}-label` : `${id}-input`
+  state.labeled ? `${id}-label` : undefined
+
+function fieldName(field: HTMLElement | undefined) {
+  if (!field) {
+    return {}
+  }
+  const ids = (field.getAttribute("aria-labelledby") ?? "")
+    .split(/\s+/)
+    .filter((id) => id && id !== field.id)
+  if (ids.length) {
+    return { "aria-labelledby": ids.join(" ") }
+  }
+  const label = field.getAttribute("aria-label")
+  if (label) {
+    return { "aria-label": label }
+  }
+  const labels = labelsOf(field)
+  if (labels.length && labels.every((label) => label.id)) {
+    return { "aria-labelledby": labels.map((label) => label.id).join(" ") }
+  }
+  const text = labels
+    .map((label) => label.textContent?.trim())
+    .filter(Boolean)
+    .join(" ")
+  return text ? { "aria-label": text } : {}
+}
+
+// Names a listbox as its field is named while there's no label part. Read on
+// bind, on focus arriving in the field and when a label or list part comes or
+// goes, so a keystroke or a highlight costs no attribute reads.
+function nameAsField<State extends ListPopupState>(
+  el: HTMLElement,
+  part: {
+    id: string
+    store: { get: () => State; subscribe: (listener: () => void) => () => void }
+    api: ListPopupApi
+  },
+  isListbox: (state: State) => boolean
+) {
+  const channel = `field-name:${part.id}`
+  let field: HTMLElement | undefined
+  let named: boolean | undefined
+  const update = () => {
+    const state = part.store.get()
+    named = isListbox(state) && !state.labeled
+    applyAttrs(el, named ? fieldName(field) : {}, channel)
+  }
+  // The field and its labels bind in the same commit as the list.
+  let active = true
+  queueMicrotask(() => {
+    if (!active) {
+      return
+    }
+    field = part.api.internal.inputElement()
+    field?.addEventListener("focusin", update)
+    update()
+  })
+  const unsubscribe = part.store.subscribe(() => {
+    const state = part.store.get()
+    if (named !== undefined && named !== (isListbox(state) && !state.labeled)) {
+      update()
+    }
+  })
+  return () => {
+    active = false
+    unsubscribe()
+    field?.removeEventListener("focusin", update)
+    applyAttrs(el, {}, channel)
+  }
+}
 
 // The popup the list opens in. It's the listbox itself until a list part
 // renders inside it, next to a header or a status.
@@ -120,13 +195,25 @@ function listContentPart<
       ...pressKeepsFocus,
       keydown: (event, { api }) => api.internal.onListKeyDown(event),
     },
-    bind: (el, part) =>
-      bindListContent(el, part.key, part.store, part.api.internal, {
-        part,
-        anchor: part.api.internal.anchorElement,
-        // A sheet opens at half the screen at most, and grows for the keyboard.
-        snapPoints: sheetSnapPoints,
-      }),
+    bind: (el, part) => {
+      const unname = nameAsField(el, part, (state) => !state.listed)
+      const unbind = bindListContent(
+        el,
+        part.key,
+        part.store,
+        part.api.internal,
+        {
+          part,
+          anchor: part.api.internal.anchorElement,
+          // A sheet opens at half the screen at most, and grows for the keyboard.
+          snapPoints: sheetSnapPoints,
+        }
+      )
+      return () => {
+        unname()
+        unbind()
+      }
+    },
   } satisfies SlotDefinition<State, Api, ListContentProps & BaseSlotProps, {}> &
     RoleFields<State, Api, ListContentProps & BaseSlotProps>
 }
@@ -182,7 +269,7 @@ function bindListContent(
 }
 
 // The listbox inside the content, when the content holds more than the list.
-function listPart<State extends ListPopupState, Api>() {
+function listPart<State extends ListPopupState, Api extends ListPopupApi>() {
   return {
     role: "listbox",
     keys: {
@@ -194,7 +281,14 @@ function listPart<State extends ListPopupState, Api>() {
       "aria-labelledby": listLabelledBy(state, id),
       "aria-busy": state.status === "loading" ? "true" : undefined,
     }),
-    bind: (el, { store }) => flagWhileBound(store, "listed"),
+    bind: (el, part) => {
+      const unname = nameAsField(el, part, () => true)
+      const unflag = flagWhileBound(part.store, "listed")
+      return () => {
+        unname()
+        unflag()
+      }
+    },
   } satisfies SlotDefinition<State, Api, BaseSlotProps, {}> &
     RoleFields<State, Api, BaseSlotProps>
 }
