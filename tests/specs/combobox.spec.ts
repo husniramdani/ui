@@ -325,6 +325,27 @@ test.describe("default value", () => {
     await open("combobox", { value: "fr" })
     await expect(input(page)).toHaveValue("France")
   })
+
+  test("typing inside its label keeps the caret where it was", async ({
+    page,
+    open,
+  }) => {
+    await open("combobox", { value: "fr" })
+    await input(page).focus()
+    // Open first, so a sheet has moved the input into its header.
+    await page.keyboard.press("ArrowDown")
+    await expect(listbox(page)).toBeVisible()
+    await input(page).evaluate((el: HTMLInputElement) =>
+      el.setSelectionRange(1, 1)
+    )
+    await page.keyboard.type("x")
+    await expect(input(page)).toHaveValue("Fxrance")
+    await expect
+      .poll(() =>
+        input(page).evaluate((el: HTMLInputElement) => el.selectionStart)
+      )
+      .toBe(2)
+  })
 })
 
 test.describe("multiple", () => {

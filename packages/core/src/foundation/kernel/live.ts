@@ -257,7 +257,12 @@ function writeChannel(
     // A text field shows its value property. The attribute is only the default,
     // and setting it before anyone types replaces the text with the caret at
     // the start, so the property goes first, as every framework writes it.
-    if (name === "value" && isTextField(el) && el.value !== value) {
+    if (
+      name === "value" &&
+      isTextField(el) &&
+      previous.get(name) !== value &&
+      el.value !== value
+    ) {
       el.value = value
     }
     const current =
