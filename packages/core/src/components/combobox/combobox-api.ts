@@ -941,8 +941,21 @@ function comboboxApiBody(
         const target = pendingHighlight
         pendingHighlight = null
         if (!store.get().focusInList) {
+          const selected =
+            options().highlightSelected && !filterQuery()
+              ? listbox
+                  .entries()
+                  .find(
+                    (entry) =>
+                      !entry.pinned &&
+                      !entry.disabled &&
+                      selection.isSelected(entry.key, entry.value)
+                  )
+              : undefined
           if (options().autoHighlight === "always") {
             settleHighlight(false)
+          } else if (selected) {
+            listbox.highlight(selected.key)
           } else if (
             target === "first" &&
             options().autoHighlight &&

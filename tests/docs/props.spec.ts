@@ -439,6 +439,8 @@ const components: Record<string, Component> = {
       loop: "ComboboxOptions",
       // The page describes it with choosing several values.
       keepQuery: "ComboboxOptions",
+      // The page describes it with Auto Highlight.
+      highlightSelected: "ComboboxOptions",
       // It works as every form control's does, which Slider's form example shows.
       form: "ComboboxOptions",
     },
