@@ -149,3 +149,50 @@ test("arrows still reach unchosen items once a multiple combobox is at maxSelect
   await combo.keys("ArrowDown", "ArrowDown")
   expect(combo.state.highlighted).toBe("Done")
 })
+
+// Modified by Husni Ramdani in the fork husniramdani/ui, 2026 (#5).
+test("highlightSelected highlights the selected item when the list opens, and arrows move from it", async () => {
+  const combo = view({
+    items: ["Backlog", "Todo", "Done"],
+    defaultValue: "Todo",
+    highlightSelected: true,
+  })
+  await combo.keys("ArrowDown")
+  await settle()
+  expect(combo.state.highlighted).toBe("Todo")
+  await combo.keys("ArrowDown")
+  expect(combo.state.highlighted).toBe("Done")
+})
+
+test("highlightSelected highlights nothing on its own while nothing is selected", async () => {
+  const combo = view({
+    items: ["Backlog", "Todo", "Done"],
+    highlightSelected: true,
+    defaultOpen: true,
+  })
+  await settle()
+  expect(combo.state.highlighted).toBe(null)
+})
+
+test("highlightSelected with multiple highlights the first selected item in the list", async () => {
+  const combo = view({
+    items: ["Backlog", "Todo", "Done"],
+    multiple: true,
+    defaultValue: ["Done", "Todo"],
+    highlightSelected: true,
+  })
+  await combo.keys("ArrowDown")
+  await settle()
+  expect(combo.state.highlighted).toBe("Todo")
+})
+
+test("highlightSelected leaves typing to autoHighlight", async () => {
+  const combo = view({
+    items: ["Backlog", "Todo", "Done"],
+    defaultValue: "Todo",
+    highlightSelected: true,
+  })
+  await combo.type("do")
+  await settle()
+  expect(combo.state.highlighted).toBe(null)
+})
