@@ -40,3 +40,6 @@ apps/docs/public/examples/
 
 # DeepSec scan workspace and results.
 .deepsec/
+
+# Packed by scripts/stylebase/pack.mjs
+.stylebase
