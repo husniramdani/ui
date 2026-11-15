@@ -339,6 +339,11 @@ type ComboboxSharedOptions<T> = PortalProps & {
    */
   autoHighlight?: boolean | "always"
   /**
+   * Whether opening the list without text highlights the selected item, or with `multiple` the first selected one, so arrows move from there. Unlike `autoHighlight="always"`, nothing is highlighted while nothing is selected.
+   * @defaultValue false
+   */
+  highlightSelected?: boolean
+  /**
    * With `multiple`, whether the input keeps its text after an item is chosen.
    * @defaultValue false
    */
@@ -709,6 +714,7 @@ const comboboxPrimitive = /* @__PURE__ */ definePrimitive({
         : attribute === "always"
           ? "always"
           : attribute !== "false",
+    highlightSelected: "boolean",
     keepQuery: "boolean",
     allowCustomValue: "boolean",
     status: "string",

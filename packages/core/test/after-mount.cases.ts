@@ -825,6 +825,7 @@ const cases: Case[] = [
       value: ["Apple", "Banana"],
       maxSelected: [2, 1],
       autoHighlight: [false, true],
+      highlightSelected: [false, true],
       keepQuery: [false, true],
       allowCustomValue: [false, true],
       ...placed,

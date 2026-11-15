@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
-// Where Combobox's highlight goes: on open with `autoHighlight: "always"`,
-// and as the list changes under a highlight `autoHighlight` placed or the user moved.
+// Where Combobox's highlight goes on open, and as the list changes under a
+// highlight `autoHighlight` placed or the user moved.
 import { afterEach, expect, test } from "vitest"
 import { combobox } from "../src/components/combobox/combobox"
 import type { OptionsOf } from "../src/foundation/kernel/primitive-types"
@@ -49,6 +49,41 @@ test('"always" highlights the first item when nothing is selected', async () => 
   await combo.keys("ArrowDown")
   await settle()
   expect(combo.state.highlighted).toBe("Backlog")
+})
+
+test("highlightSelected highlights the selected item when the list opens, and arrows move from it", async () => {
+  const combo = view({
+    items: ["Backlog", "Todo", "Done"],
+    defaultValue: "Todo",
+    highlightSelected: true,
+  })
+  await combo.keys("ArrowDown")
+  await settle()
+  expect(combo.state.highlighted).toBe("Todo")
+  await combo.keys("ArrowDown")
+  expect(combo.state.highlighted).toBe("Done")
+})
+
+test("highlightSelected highlights nothing on its own while nothing is selected", async () => {
+  const combo = view({
+    items: ["Backlog", "Todo", "Done"],
+    highlightSelected: true,
+    defaultOpen: true,
+  })
+  await settle()
+  expect(combo.state.highlighted).toBe(null)
+})
+
+test("highlightSelected with multiple highlights the first selected item in the list", async () => {
+  const combo = view({
+    items: ["Backlog", "Todo", "Done"],
+    multiple: true,
+    defaultValue: ["Done", "Todo"],
+    highlightSelected: true,
+  })
+  await combo.keys("ArrowDown")
+  await settle()
+  expect(combo.state.highlighted).toBe("Todo")
 })
 
 test("results that arrive while open take the highlight autoHighlight placed", async () => {

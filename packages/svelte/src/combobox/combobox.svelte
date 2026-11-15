@@ -94,6 +94,7 @@ list are its parts.
     itemToLabel,
     isItemEqualToValue,
     autoHighlight,
+    highlightSelected,
     keepQuery,
     pendingAnnouncement,
     allowCustomValue,
@@ -145,6 +146,8 @@ list are its parts.
     isItemEqualToValue?: (itemValue: T, value: T) => boolean
     /** Whether the first matching item is highlighted while typing, so Enter chooses it. `"always"` also highlights the selected item, or the first, when the list opens. */
     autoHighlight?: boolean | "always"
+    /** Whether opening the list without text highlights the selected item, or with `multiple` the first selected one, so arrows move from there. */
+    highlightSelected?: boolean
     /** With `multiple`, whether the input keeps its text after an item is chosen. */
     keepQuery?: boolean
     /** What screen readers hear once the Create part's action has been pending for a second. An empty string says nothing. */
@@ -221,6 +224,7 @@ list are its parts.
     itemToLabel,
     isItemEqualToValue,
     autoHighlight,
+    highlightSelected,
     keepQuery,
     pendingAnnouncement,
     allowCustomValue,
