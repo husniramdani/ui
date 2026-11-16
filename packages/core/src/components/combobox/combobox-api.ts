@@ -1,3 +1,6 @@
+// Modified by Husni Ramdani in the fork husniramdani/ui, 2026: adds the highlightSelected option (#5).
+// Fork of UI SDK (vercel-labs/ui), Apache-2.0. See scripts/stylebase/CHANGES.md.
+
 // Combobox's state and API: opening and closing, the text and how it filters,
 // choosing and removing items, the create option, and what the form asks of it.
 import { type AsyncOptionsStatus } from "../../foundation/lists/async-options"

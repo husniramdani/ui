@@ -1,3 +1,6 @@
+// Modified by Husni Ramdani in the fork husniramdani/ui, 2026: names the list as its input is named (#2).
+// Fork of UI SDK (vercel-labs/ui), Apache-2.0. See scripts/stylebase/CHANGES.md.
+
 // What Combobox and Autocomplete share as fields that pop up a list: the
 // content the list opens in, the list part inside it, and the state their
 // field and its buttons reflect.

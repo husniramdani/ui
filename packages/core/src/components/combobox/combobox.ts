@@ -1,3 +1,6 @@
+// Modified by Husni Ramdani in the fork husniramdani/ui, 2026: adds the highlightSelected option (#5).
+// Fork of UI SDK (vercel-labs/ui), Apache-2.0. See scripts/stylebase/CHANGES.md.
+
 // Combobox: a text input that filters a list of options and holds the
 // chosen one, with chips for several. This module is the public API and
 // assembles the primitive. State and the API live in combobox-api.ts, keys
