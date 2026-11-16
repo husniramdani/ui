@@ -244,6 +244,7 @@ function defineDialogParts(
           ] as PropType<DialogInitialFocus>,
           finalFocus: [String, Object, Function] as PropType<DialogFinalFocus>,
           keepMounted: optionalBoolean,
+          inline: optionalBoolean,
           // Renders the popup into this element instead of in place.
           container: containerProp,
         },
@@ -256,6 +257,7 @@ function defineDialogParts(
             initialFocus: props.initialFocus,
             finalFocus: props.finalFocus,
             keepMounted: props.keepMounted,
+            inline: props.inline,
           })
           const part = usePart(dialog, "content", content)
           return () => {

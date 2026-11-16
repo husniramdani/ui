@@ -112,6 +112,7 @@ function dialogSlots(
         initialFocus: "string",
         finalFocus: "string",
         keepMounted: "boolean",
+        inline: "boolean",
       },
       connect: registerPopupElement,
       role: (state, { api }) => api.internal.role,

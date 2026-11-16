@@ -231,7 +231,7 @@ type OutletProps = {
  * The props the `content` slot of `drawer` takes.
  * @stable
  */
-type DrawerContentProps = DialogContentProps
+type DrawerContentProps = Omit<DialogContentProps, "inline">
 /**
  * The props the `outlet` slot of `drawer` takes.
  * @stable
