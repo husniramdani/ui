@@ -1,4 +1,4 @@
-// Packs this fork's packages as @husniramdani/ui-sdk-*, for Stylebase to
+// Packs this fork's packages as @spindyzel/ui-sdk-*, for Stylebase to
 // install by alias. See README.md beside it.
 import { execFileSync } from "node:child_process"
 import {
@@ -37,7 +37,7 @@ for (const name of packages) {
   run("tar", ["-xzf", tarball], work)
   const manifestPath = join(work, "package", "package.json")
   const manifest = JSON.parse(readFileSync(manifestPath, "utf8"))
-  manifest.name = `@husniramdani/ui-sdk-${name}`
+  manifest.name = `@spindyzel/ui-sdk-${name}`
   manifest.version = version
   manifest.repository = {
     type: "git",

@@ -19,19 +19,19 @@ Behaviour upstream means to have isn't patched here; it's raised with them or ha
 
 ## Publishing
 
-The packages Stylebase uses go to npm as `@husniramdani/ui-sdk-core`, `-svelte`, `-vue` and `-react`. The version is upstream's with a `stylebase.N` suffix, like `0.1.0-beta.5.stylebase.1`, so it sorts after the upstream release it's based on and before the next one.
+The packages Stylebase uses go to npm as `@spindyzel/ui-sdk-core`, `-svelte`, `-vue` and `-react`. The version is upstream's with a `stylebase.N` suffix, like `0.1.0-beta.5.stylebase.1`, so it sorts after the upstream release it's based on and before the next one.
 
 ```sh
 node scripts/stylebase/pack.mjs 0.1.0-beta.5.stylebase.1
-npm publish .stylebase/husniramdani-ui-sdk-core-0.1.0-beta.5.stylebase.1.tgz --access public --tag stylebase
+npm publish .stylebase/spindyzel-ui-sdk-core-0.1.0-beta.5.stylebase.1.tgz --access public --tag stylebase
 # then svelte, vue and react, which name core as a peer
 ```
 
 Stylebase installs them by alias, so its code keeps importing `@ui-sdk/*`:
 
 ```sh
-pnpm add @ui-sdk/core@npm:@husniramdani/ui-sdk-core@0.1.0-beta.5.stylebase.1 \
-  @ui-sdk/svelte@npm:@husniramdani/ui-sdk-svelte@0.1.0-beta.5.stylebase.1
+pnpm add @ui-sdk/core@npm:@spindyzel/ui-sdk-core@0.1.0-beta.5.stylebase.1 \
+  @ui-sdk/svelte@npm:@spindyzel/ui-sdk-svelte@0.1.0-beta.5.stylebase.1
 ```
 
 Going back to upstream is a version change in the same place.
