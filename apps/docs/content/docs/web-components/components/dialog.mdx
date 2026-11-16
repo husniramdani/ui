@@ -196,6 +196,8 @@ To keep a small part of the page usable while a modal dialog is open, like a cha
 
 Dialogs render where you put them and use the browser's top layer. Set `container` to a selector when their DOM needs to live elsewhere, like a shadow root. The [popup guide](../popups#hidden-content-and-containers) covers containers and iframes.
 
+Set `inline` on the content to keep it where it renders instead of the top layer, so it stays inside a positioned frame like an app preview. Pair it with `modal="trap-focus"`, which leaves the page around it usable.
+
 <ComponentExample
   name="dialog/modal"
   caption="Choose a mode, open Notes, and try Tab or clicking the page. Check Close on outside press to compare dismissal."

@@ -142,6 +142,7 @@ function dialogParts(
     initialFocus,
     finalFocus,
     keepMounted,
+    inline,
     container,
     render,
     ...props
@@ -158,7 +159,7 @@ function dialogParts(
     const element = usePart(
       handle,
       "content",
-      { initialFocus, finalFocus, keepMounted },
+      { initialFocus, finalFocus, keepMounted, inline },
       partProps
     )
     return element && renderPopup(element, target)

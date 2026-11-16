@@ -232,6 +232,25 @@ test.describe(
   }
 )
 
+test.describe("rendering in place", { tag: "@enhancement" }, () => {
+  test("an inline dialog and its backdrop stay where they render, out of the top layer", async ({
+    page,
+    open,
+  }) => {
+    await open("dialog", { inline: "", modal: "trap-focus" })
+    await openWithKeyboard(page)
+    const layers = await page.evaluate(() =>
+      [...document.querySelectorAll<HTMLElement>(".dialog, .dialog-backdrop")]
+        .filter((el) => !el.hidden)
+        .map((el) => el.hasAttribute("popover") || el.matches(":modal"))
+    )
+    expect(layers).toEqual([false, false])
+    await page.keyboard.press("Escape")
+    await expect(dialog(page)).toBeHidden()
+    await expect(trigger(page)).toBeFocused()
+  })
+})
+
 test.describe("nested and stacked", { tag: "@enhancement" }, () => {
   test("a dialog opened inside a dialog marks both, for styling", async ({
     page,

@@ -86,7 +86,7 @@ function alertDialogOptions() {
   }
 }
 
-// Focus options for the dialog's content part: ?initialFocus=content|none&finalFocus=none.
+// Options for the dialog's content part: ?initialFocus=content|none&finalFocus=none&inline.
 function dialogContentOptions() {
   const params = new URLSearchParams(location.search)
   const initial = params.get("initialFocus")
@@ -94,6 +94,7 @@ function dialogContentOptions() {
   return {
     ...(initial && { initialFocus: initial as "content" | "none" }),
     ...(final && { finalFocus: final as "none" }),
+    ...(params.has("inline") && { inline: true }),
   }
 }
 

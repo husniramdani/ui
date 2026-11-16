@@ -202,6 +202,7 @@ function bindPopupContent(
           rules?.preferredFocus
         )),
     backdrop: () => element("backdrop"),
+    inline: !!(contentProps(key) as { inline?: boolean }).inline,
     ...rules?.bind?.(),
   })
 }

@@ -91,6 +91,8 @@ const placed = {
 const popupSkips = {
   presentation:
     "Decided each time it opens, so an open one keeps how it presents.",
+  "content.inline":
+    "Decided each time it opens, so an open one stays in the top layer or in place.",
   container: "An element, which markup can't name.",
   "content.container": "An element, which markup can't name.",
   "content.anchor":

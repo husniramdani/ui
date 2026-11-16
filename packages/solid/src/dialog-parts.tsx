@@ -168,12 +168,14 @@ function createDialogParts(
       initialFocus: props.initialFocus,
       finalFocus: props.finalFocus,
       keepMounted: props.keepMounted,
+      inline: props.inline,
     })
     const rest = omit(
       props,
       "initialFocus",
       "finalFocus",
       "keepMounted",
+      "inline",
       "container"
     )
     return popupPart(useDialog(), "content", content, rest, target, viewport)
