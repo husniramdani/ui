@@ -1,3 +1,6 @@
+// Modified by Husni Ramdani in the fork husniramdani/ui, 2026: keeps a popup's origin steady between layout steps (#11).
+// Fork of UI SDK (vercel-labs/ui), Apache-2.0. See scripts/stylebase/CHANGES.md.
+
 import { shadowRootsAround, watchMoves, watchShadowRoots } from "./moves"
 import { physicalSide, type PhysicalSide, type Side } from "./sides"
 import { ahead, registerUninherited } from "./style"
