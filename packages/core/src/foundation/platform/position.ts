@@ -427,6 +427,10 @@ function position(
 
   let last = ""
   let placed = false
+  // The containing block's origin last time. Boxes snap to the layout steps
+  // (1/64px, 1/60px in Firefox), so one read back from offsets between steps
+  // puts the origin up to a step off. Less than two steps away isn't a move.
+  let lastOrigin = { x: 0, y: 0 }
   // Sizes are left to `platform/moves.ts` and the slow check, not a
   // `ResizeObserver`: components whose own observers resize a popup, like a
   // navigation menu's viewport, would make the browser report "ResizeObserver
@@ -543,10 +547,13 @@ function position(
       }
     )
     const across = isVertical(result.side) ? scale.x : scale.y
+    const steady = (read: number, last: number) =>
+      Math.abs(read - last) < 1 / 32 ? last : read
     const origin = {
-      x: box.x - (parseFloat(style.left) || 0) * scale.x,
-      y: box.y - (parseFloat(style.top) || 0) * scale.y,
+      x: steady(box.x - (parseFloat(style.left) || 0) * scale.x, lastOrigin.x),
+      y: steady(box.y - (parseFloat(style.top) || 0) * scale.y, lastOrigin.y),
     }
+    lastOrigin = origin
     popup.style("left", `${(result.x - origin.x) / scale.x}px`)
     popup.style("top", `${(result.y - origin.y) / scale.y}px`)
     if (first) {
