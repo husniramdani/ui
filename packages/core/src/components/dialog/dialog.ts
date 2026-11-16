@@ -315,6 +315,12 @@ type ContentProps = PortalProps & {
    * @defaultValue false
    */
   keepMounted?: boolean
+  /**
+   * Whether the dialog renders where it is instead of the top layer, so it stays inside a positioned
+   * ancestor like an app frame or a preview. Pair it with `modal="trap-focus"` to leave the page around it usable.
+   * @defaultValue false
+   */
+  inline?: boolean
 }
 
 type CloseProps = {

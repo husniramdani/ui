@@ -285,6 +285,8 @@ const components: Record<string, Component> = {
       container: "DialogOptions",
       // Needs page content outside the example to keep usable. The page describes it.
       persistentElements: "DialogOptions",
+      // Needs a positioned frame around the example to stay inside. The page describes it.
+      inline: "DialogContentProps",
       // For styling dialogs by how many are open above them. The page describes nested dialogs.
       stack: "DialogContentState",
     },
@@ -317,6 +319,8 @@ const components: Record<string, Component> = {
       container: "AlertDialogOptions",
       // Needs page content outside the example to keep usable. Dialog's page describes it.
       persistentElements: "AlertDialogOptions",
+      // Needs a positioned frame around the example to stay inside. Dialog's page describes it.
+      inline: "AlertDialogContentProps",
       // For styling dialogs by how many are open above them. Dialog's page describes nested dialogs.
       stack: "AlertDialogContentState",
     },

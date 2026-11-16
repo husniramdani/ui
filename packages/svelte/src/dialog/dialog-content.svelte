@@ -22,6 +22,7 @@ The dialog itself, named by its title and described by its description.
     initialFocus,
     finalFocus,
     keepMounted,
+    inline,
     container,
     ...rest
   }: PartProps<"div", DialogContentState<Payload>> &
@@ -42,7 +43,7 @@ The dialog itself, named by its title and described by its description.
   const content = useHandlePart(
     dialog.handle,
     "content",
-    () => ({ initialFocus, finalFocus, keepMounted }),
+    () => ({ initialFocus, finalFocus, keepMounted, inline }),
     portalTo(() => (viewport?.present ? false : target()))
   )
 </script>

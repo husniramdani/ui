@@ -905,10 +905,12 @@ function createPopupLayer<
     // The backdrop goes into the top layer first, so it sits just below the popup.
     const backdrop = shown?.backdrop
     if (backdrop) {
-      const stop = showBackdrop(backdrop)
+      const stop = showBackdrop(backdrop, config.inline)
       cleanups.push(() => {
         stop()
-        hideBackdrop(backdrop)
+        if (!config.inline) {
+          hideBackdrop(backdrop)
+        }
       })
     }
     if (!config.inline) {
@@ -930,7 +932,7 @@ function createPopupLayer<
         cleanups.push(config.rendered(placement.follow))
       }
     }
-    if (!supportsTopLayer() && !host.style.zIndex) {
+    if (!config.inline && !supportsTopLayer() && !host.style.zIndex) {
       host.style.zIndex = "2147483000"
     }
     cleanups.push(
@@ -1237,8 +1239,11 @@ function createPopupLayer<
     shown.cleanup = attach(el, config)
   }
 
-  function showBackdrop(backdrop: HTMLElement) {
+  function showBackdrop(backdrop: HTMLElement, inline?: boolean) {
     backdrop.removeAttribute("hidden")
+    if (inline) {
+      return animateIn(backdrop)
+    }
     backdrop.setAttribute("popover", "manual")
     try {
       backdrop.showPopover()
