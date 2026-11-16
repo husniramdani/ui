@@ -1,3 +1,5 @@
+<!-- Modified by Husni Ramdani in the fork husniramdani/ui, 2026: adds the inline prop (#7).
+Fork of UI SDK (vercel-labs/ui), Apache-2.0. See scripts/stylebase/CHANGES.md. -->
 <!--
 @component
 The dialog itself, named by its title and described by its description.

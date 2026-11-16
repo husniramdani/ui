@@ -1,3 +1,6 @@
+// Modified by Husni Ramdani in the fork husniramdani/ui, 2026: adds the dialog content option inline (#7).
+// Fork of UI SDK (vercel-labs/ui), Apache-2.0. See scripts/stylebase/CHANGES.md.
+
 // The parts Dialog, Alert Dialog and Drawer share. Each primitive spreads
 // them into its own `slots`, and overrides the ones that differ.
 import { dev, warn } from "#dev"

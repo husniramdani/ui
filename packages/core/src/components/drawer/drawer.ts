@@ -1,3 +1,6 @@
+// Modified by Husni Ramdani in the fork husniramdani/ui, 2026: adds the dialog content option inline (#7).
+// Fork of UI SDK (vercel-labs/ui), Apache-2.0. See scripts/stylebase/CHANGES.md.
+
 // Drawer: a dialog presented as a sheet. Dialog's behavior and parts (focus,
 // dismissal, nesting, Close actions, controllers that await a result) plus
 // the sheet presentation from `popups/sheet.ts`: snap points, dragging with iOS
