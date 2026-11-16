@@ -1,3 +1,6 @@
+// Modified by Husni Ramdani in the fork husniramdani/ui, 2026: adds the dialog content option inline (#7).
+// Fork of UI SDK (vercel-labs/ui), Apache-2.0. See scripts/stylebase/CHANGES.md.
+
 // The parts every popup has: one builder each, and `popupSlots` for all of
 // them. A popup that renders only some takes those builders, so it bundles
 // only those. They read the preset, the role and everything they call from

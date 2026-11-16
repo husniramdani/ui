@@ -1,4 +1,4 @@
-// Modified by Husni Ramdani in the fork husniramdani/ui, 2026: keeps the caret when typing inside a chosen label (#1).
+// Modified by Husni Ramdani in the fork husniramdani/ui, 2026: keeps the caret when typing inside a chosen label (#1); a click on its label focuses without opening the list (#9).
 // Fork of UI SDK (vercel-labs/ui), Apache-2.0. See scripts/stylebase/CHANGES.md.
 
 // Combobox's parts and the attributes they carry.

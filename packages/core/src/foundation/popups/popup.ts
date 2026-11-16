@@ -1,3 +1,6 @@
+// Modified by Husni Ramdani in the fork husniramdani/ui, 2026: adds the dialog content option inline (#7).
+// Fork of UI SDK (vercel-labs/ui), Apache-2.0. See scripts/stylebase/CHANGES.md.
+
 // The popup layer every overlay shares: presence, the top layer, positioning,
 // dismissal, modal side effects, Tab handling, and where focus goes on open
 // and close. A component calls `createPopupLayer` once in `api` and `bind` from its
