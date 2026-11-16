@@ -326,3 +326,40 @@ test("a popup stays in the part of the page a pinch zoom shows", async ({
   expect(box.x + box.width).toBeLessThanOrEqual(visual.x + visual.width)
   await cdp.send("Emulation.setPageScaleFactor", { pageScaleFactor: 1 })
 })
+
+test("a popup placed again from between two layout steps lands where its placement puts it", async ({
+  page,
+}) => {
+  const left = await page.evaluate(async () => {
+    const frames = async (n: number) => {
+      for (let frame = 0; frame < n; frame++) {
+        await new Promise(requestAnimationFrame)
+      }
+    }
+    const stage = document.createElement("div")
+    stage.id = "probe-stage"
+    stage.innerHTML = `<div id="probe-anchor" style="width: 80px; height: 30px; margin: 300px 100px"></div><div id="probe-popup" popover="manual" style="width: 200px; height: 40px; padding: 0; border: 0; margin: 0"></div>`
+    document.body.append(stage)
+    const anchor = document.getElementById("probe-anchor")!
+    const popup = document.getElementById("probe-popup")!
+    popup.showPopover()
+    const { loadCoreModule } = window as unknown as {
+      loadCoreModule: (name: string) => Promise<{
+        position: (a: Element, el: HTMLElement, o: object) => () => void
+      }>
+    }
+    const { position } = await loadCoreModule("position")
+    position(anchor, popup, { side: "bottom", align: "start" })
+    await frames(4)
+    // Left between two of the browser's layout steps, as an animation or an
+    // earlier placement leaves it, then the anchor moves so it's placed again.
+    popup.style.left = "40.3px"
+    anchor.style.marginLeft = "101px"
+    await frames(6)
+    return {
+      written: parseFloat(popup.style.left),
+      target: anchor.getBoundingClientRect().x,
+    }
+  })
+  expect(Math.abs(left.written - left.target)).toBeLessThan(1e-4)
+})
