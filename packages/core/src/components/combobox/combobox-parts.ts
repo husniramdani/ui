@@ -1,3 +1,6 @@
+// Modified by Husni Ramdani in the fork husniramdani/ui, 2026: keeps the caret when typing inside a chosen label (#1).
+// Fork of UI SDK (vercel-labs/ui), Apache-2.0. See scripts/stylebase/CHANGES.md.
+
 // Combobox's parts and the attributes they carry.
 import { dev } from "#dev"
 import type {
