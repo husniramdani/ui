@@ -24,6 +24,19 @@ test.describe("enhancements", { tag: "@enhancement" }, () => {
     await expect(page.getByRole("listbox", { name: "Country" })).toBeVisible()
   })
 
+  test("clicking the label focuses the input without opening the list, like a select's label", async ({
+    page,
+    open,
+  }) => {
+    await open("combobox")
+    await page.locator("[data-slot=combobox-label]").click()
+    await expect(input(page)).toBeFocused()
+    await page.waitForTimeout(100)
+    await expect(input(page)).toHaveAttribute("aria-expanded", "false")
+    await input(page).click()
+    await expect(listbox(page)).toBeVisible()
+  })
+
   test("filtering matches an item's keywords as well as its label", async ({
     page,
     open,
