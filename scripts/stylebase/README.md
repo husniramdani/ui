@@ -11,7 +11,7 @@ This fork of [vercel-labs/ui](https://github.com/vercel-labs/ui) is what Styleba
 ## A fix, start to finish
 
 1. Open an issue on this fork: the problem, how to reproduce it, before and after (screenshots or test output), the cause and the fix.
-2. Fix it on a branch from `main`, with a test that fails without the fix. Open a pull request into `stylebase` that closes the issue.
+2. Fix it on a branch from `main`, with a test that fails without the fix. Open a pull request into `stylebase` that closes the issue. Once it's merged, add it to [CHANGES.md](CHANGES.md) and put the two-line "Modified by" header at the top of each file it changes, as the license asks.
 3. Once it has held up in Stylebase, open an issue upstream (unless one exists), then the upstream pull request from the same branch.
 4. When upstream releases it, drop it from `stylebase` on the next rebase.
 
