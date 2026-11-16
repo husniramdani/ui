@@ -68,6 +68,7 @@ import { formatLabels, listOf } from "../../foundation/lists/listbox-value"
 import { selects } from "../../foundation/kernel/selects"
 import { direct, live } from "../../foundation/kernel/live"
 import { pressKeepsFocus } from "../../foundation/focus/press-keeps-focus"
+import { on } from "../../foundation/kernel/events"
 
 type ItemProps = ComboboxItemProps<unknown> & {
   /** @internal The group the item is in. */
@@ -190,6 +191,10 @@ function overflowState(state: ComboboxState, api: ComboboxApi) {
   return next
 }
 
+// Inputs whose label was just clicked. The label's click reaches the input as a
+// second click, which focuses it without opening the list, like a select's label.
+const labelClicks = new WeakSet<Element>()
+
 const comboboxSlots = (slot: SlotFactory<ComboboxState, ComboboxApi>) => ({
   root: slot(rootPart<ComboboxState, ComboboxApi>({ focusOnSelfClick: false })),
 
@@ -266,8 +271,8 @@ const comboboxSlots = (slot: SlotFactory<ComboboxState, ComboboxApi>) => ({
         api.internal.hide({ reason: "focus-out", event })
       },
     },
-    press({ api, store }, event) {
-      if (store.get().open) {
+    press({ api, store, el }, event) {
+      if (store.get().open || (el && labelClicks.has(el))) {
         return
       }
       api.internal.show({ event, by: openerOf(event), reason: "trigger-press" })
@@ -309,10 +314,27 @@ const comboboxSlots = (slot: SlotFactory<ComboboxState, ComboboxApi>) => ({
         open: (event) =>
           api.internal.show({ event, by: "touch", reason: "trigger-press" }),
       })
+      const offLabel = on(
+        el.ownerDocument,
+        "click",
+        (event) => {
+          const target = event.composedPath()[0]
+          if (
+            target !== el &&
+            target instanceof Element &&
+            target.closest("label")?.control === el
+          ) {
+            labelClicks.add(el)
+            setTimeout(() => labelClicks.delete(el))
+          }
+        },
+        { capture: true }
+      )
       return () => {
         off()
         offInline()
         offSheet()
+        offLabel()
       }
     },
   }),
