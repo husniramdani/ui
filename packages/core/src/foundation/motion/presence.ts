@@ -159,21 +159,37 @@ function writeOpen(el: HTMLElement, open: boolean) {
  * it animates out, then `done`, once every running animation has finished or
  * a timeout from the computed durations has passed. Unmount the element in
  * `done`: after an animation it keeps `data-ending-style` until then, and
- * loses it and `inert` two frames later if it stays mounted. Returns a
- * cleanup that stops it.
+ * loses it two frames later if it stays mounted. `inert` goes back to what
+ * it was then, unless the element's owner wrote it meanwhile, like a panel
+ * kept mounted that stays inert while closed. Returns a cleanup that stops it.
  * @stable
  */
 function animateOut(el: HTMLElement, done: () => void) {
   pendingResets.get(el)?.()
   el.removeAttribute("data-starting-style")
   el.setAttribute("data-ending-style", "")
-  el.inert = true
+  const wasInert = el.hasAttribute("inert")
+  el.setAttribute("inert", "")
+  // Frameworks write `inert` as they render the close, often after this
+  // runs, and the reset must not undo that.
+  let written = false
+  const Observer = el.ownerDocument?.defaultView?.MutationObserver
+  const owner = Observer
+    ? new Observer(() => {
+        written = true
+      })
+    : undefined
+  owner?.observe(el, { attributeFilter: ["inert"] })
   let frame = 0
   const reset = () => {
     cancelAnimationFrame(frame)
     pendingResets.delete(el)
     el.removeAttribute("data-ending-style")
-    el.inert = false
+    written ||= Boolean(owner?.takeRecords().length)
+    owner?.disconnect()
+    if (!written) {
+      el.toggleAttribute("inert", wasInert)
+    }
   }
   let isAnimating = false
   // Frameworks unmount on their next render, and CSS keyed on the ending style

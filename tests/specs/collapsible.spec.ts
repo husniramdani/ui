@@ -273,6 +273,24 @@ test.describe("animation", () => {
     await expect(content(page)).toBeHidden()
   })
 
+  test("a panel kept mounted keeps the inert its owner sets while it closes", async ({
+    page,
+    open,
+  }) => {
+    await open("collapsible", { open: "", "keep-mounted": "", animate: "" })
+    await trigger(page).click()
+    await expect(
+      page.locator(".collapsible-panel[data-ending-style]")
+    ).toHaveCount(1)
+    // An owner that shows a closed panel itself keeps it out of reach with inert.
+    await panel(page).evaluate((el) => el.setAttribute("inert", ""))
+    await expect(
+      page.locator(".collapsible-panel[data-ending-style]")
+    ).toHaveCount(0)
+    await page.waitForTimeout(100)
+    await expect(panel(page)).toHaveAttribute("inert", "")
+  })
+
   test("a panel open from the start doesn't animate", async ({
     page,
     open,
