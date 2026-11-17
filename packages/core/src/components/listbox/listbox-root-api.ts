@@ -1,3 +1,6 @@
+// Modified by Husni Ramdani in the fork husniramdani/ui, 2026: adds the listbox option virtualFocus, which keeps focus on the list (#20).
+// Fork of UI SDK (vercel-labs/ui), Apache-2.0. See scripts/stylebase/CHANGES.md.
+
 // Listbox's state and API: the value and its form, the option that holds the
 // tab stop, and the ways a selection changes: choosing one, toggling one,
 // replacing the selection, Shift ranges and selecting everything.

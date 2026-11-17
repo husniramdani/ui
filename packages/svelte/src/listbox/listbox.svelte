@@ -1,3 +1,5 @@
+<!-- Modified by Husni Ramdani in the fork husniramdani/ui, 2026: adds the listbox option virtualFocus, which keeps focus on the list (#20).
+Fork of UI SDK (vercel-labs/ui), Apache-2.0. See scripts/stylebase/CHANGES.md. -->
 <!--
 @component
 An always-visible list to choose one option from, or several with `multiple`.

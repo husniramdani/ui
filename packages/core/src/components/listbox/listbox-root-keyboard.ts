@@ -1,3 +1,6 @@
+// Modified by Husni Ramdani in the fork husniramdani/ui, 2026: adds the listbox option virtualFocus, which keeps focus on the list (#20).
+// Fork of UI SDK (vercel-labs/ui), Apache-2.0. See scripts/stylebase/CHANGES.md.
+
 // Listbox's keys and presses, as the APG's listbox pattern lays them out.
 // Arrows, Home and End move focus, and with `activation="automatic"` the
 // selection follows. Space and Enter choose. With `multiple`, Shift extends a

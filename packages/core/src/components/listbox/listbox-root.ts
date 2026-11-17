@@ -1,3 +1,6 @@
+// Modified by Husni Ramdani in the fork husniramdani/ui, 2026: adds the listbox option virtualFocus, which keeps focus on the list (#20).
+// Fork of UI SDK (vercel-labs/ui), Apache-2.0. See scripts/stylebase/CHANGES.md.
+
 // Listbox: an always-visible list of options to choose one or several from,
 // like a `<select size>` or `<select multiple>`, on the listbox engine Select
 // and Combobox share. This module is the public API and assembles the
