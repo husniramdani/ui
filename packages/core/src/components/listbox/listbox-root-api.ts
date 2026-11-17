@@ -330,7 +330,6 @@ function listboxApiBody(
     ) {
       return
     }
-    remembered = key
     listbox.highlight(key, { focus: false, event })
   }
 
