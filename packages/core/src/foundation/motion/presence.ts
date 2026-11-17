@@ -1,3 +1,6 @@
+// Modified by Husni Ramdani in the fork husniramdani/ui, 2026: an exit keeps the inert the element's owner writes meanwhile (#23).
+// Fork of UI SDK (vercel-labs/ui), Apache-2.0. See scripts/stylebase/CHANGES.md.
+
 // Enter and exit animations without a framework. The popup gets
 // data-starting-style for its first frame and data-ending-style while it
 // animates out. Unmounting waits for every running animation, with a timeout
