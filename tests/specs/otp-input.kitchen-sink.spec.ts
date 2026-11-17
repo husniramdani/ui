@@ -134,3 +134,31 @@ test("a controlled OTP input keeps the caret where a character was deleted or ty
   await expect(input).toHaveValue("4879")
   await expect.poll(caret).toEqual([3, 4])
 })
+
+// An owner that changes a character without changing the length, like into
+// capitals, leaves the selection where typing put it.
+test("a controlled OTP input that changes a typed character keeps the selection", async ({
+  page,
+  framework,
+}) => {
+  // Web components are uncontrolled: their uppercase variant sets the value from code.
+  test.skip(
+    !["react", "vue"].includes(framework),
+    "Controlled composition frameworks only."
+  )
+  await page.goto(`/?fixture=otp-input-kitchen-sink&framework=${framework}`)
+  await page.locator("body[data-mounted]").waitFor({ state: "attached" })
+  const input = page.locator('[data-variant="controlled-uppercase"] input')
+  await input.focus()
+  await page.keyboard.type("abc123")
+  await expect(input).toHaveValue("ABC123")
+  await page.keyboard.press("Home")
+  await page.keyboard.type("x")
+  await expect(input).toHaveValue("XBC123")
+  const selection = () =>
+    input.evaluate((el: HTMLInputElement) => [
+      el.selectionStart,
+      el.selectionEnd,
+    ])
+  await expect.poll(selection).toEqual([1, 2])
+})

@@ -1,3 +1,6 @@
+// Modified by Husni Ramdani in the fork husniramdani/ui, 2026: keeps the selection when a controlled owner changes an edit (#17).
+// Fork of UI SDK (vercel-labs/ui), Apache-2.0. See scripts/stylebase/CHANGES.md.
+
 // OTP Input's state and behavior. One real <input> holds the whole code, so
 // the browser's own typing, deleting, undo, paste, autofill, password
 // managers and SMS codes on phones all work on it. It sits invisible over the
@@ -232,8 +235,9 @@ function otpInputApiBody(
   let inserting: { reason: OTPInputValueChangeReason; event: Event } | undefined
   // Set while the core writes the element's value, so its listeners skip it.
   let writing = false
-  // Set from a controlled change until its owner has had a chance to pass it back.
-  let awaitingOwner = false
+  // The value a controlled input held before an edit, until its owner has had
+  // a chance to pass the edit back.
+  let awaitingOwner: string | undefined
   // Whether the last edit deleted, until the caret moves some other way.
   let afterDelete = false
   // What pressed last, since only a mouse press is taken over.
@@ -292,16 +296,23 @@ function otpInputApiBody(
   function syncElement() {
     const el = input()
     const { value, maxLength } = store.get()
-    if (!el || el.value === value || awaitingOwner) {
+    // The owner hasn't passed the edit back yet, so the edit stays.
+    if (!el || el.value === value || value === awaitingOwner) {
       return
     }
+    // An owner that changed the edit, like into capitals, without changing
+    // its length leaves the selection where the edit put it.
+    const kept =
+      awaitingOwner !== undefined && value.length === el.value.length
+        ? { start: el.selectionStart ?? 0, end: el.selectionEnd ?? 0 }
+        : undefined
     writing = true
     el.value = value
     writing = false
     // A value written from code is never flagged as too short.
     store.set({ tooShort: false })
     if (isFocused(el)) {
-      select(el, focusSelection(value.length, maxLength))
+      select(el, kept ?? focusSelection(value.length, maxLength))
     }
   }
 
@@ -362,6 +373,9 @@ function otpInputApiBody(
         reason: reasonOf(event),
         event,
       }
+      if (isControlled()) {
+        awaitingOwner = previous
+      }
       if (change("value", next, { reason, event: cause })) {
         if (!isControlled()) {
           store.set({ value: next })
@@ -370,14 +384,14 @@ function otpInputApiBody(
         // has rendered. Until then it keeps the typed code and its caret,
         // rather than the value the owner held before.
         else {
-          awaitingOwner = true
           queueMicrotask(() => {
-            awaitingOwner = false
+            awaitingOwner = undefined
             syncElement()
           })
         }
         complete(next, reason, cause)
       } else {
+        awaitingOwner = undefined
         restore(el, previous)
       }
     }
