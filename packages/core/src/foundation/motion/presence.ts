@@ -184,7 +184,14 @@ function animateOut(el: HTMLElement, done: () => void) {
     : undefined
   owner?.observe(el, { attributeFilter: ["inert"] })
   let frame = 0
+  let isReset = false
+  // Stopping after the exit has ended resets again, and putting back the
+  // earlier `inert` then would undo what the owner has written since.
   const reset = () => {
+    if (isReset) {
+      return
+    }
+    isReset = true
     cancelAnimationFrame(frame)
     pendingResets.delete(el)
     el.removeAttribute("data-ending-style")
