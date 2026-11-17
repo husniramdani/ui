@@ -1,4 +1,4 @@
-// Modified by Husni Ramdani in the fork husniramdani/ui, 2026: a controlled input keeps the caret after an edit mid-code (#17).
+// Modified by Husni Ramdani in the fork husniramdani/ui, 2026: a controlled input keeps the caret after an edit mid-code, and the selection when its owner changes the edit (#17).
 // Fork of UI SDK (vercel-labs/ui), Apache-2.0. See scripts/stylebase/CHANGES.md.
 
 // OTP Input's state and behavior. One real <input> holds the whole code, so
