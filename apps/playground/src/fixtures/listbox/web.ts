@@ -78,6 +78,9 @@ async function render(root: HTMLElement, data = false) {
   if (options.readOnly) {
     listbox.setAttribute("read-only", "")
   }
+  if (options.virtualFocus) {
+    listbox.setAttribute("virtual-focus", "")
+  }
   if (options.activation) {
     listbox.setAttribute("activation", options.activation)
   }

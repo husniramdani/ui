@@ -92,6 +92,7 @@ function listboxOptions() {
         ? ("horizontal" as const)
         : ("vertical" as const),
     loop: params.get("loop") !== "false",
+    ...(params.has("virtual-focus") && { virtualFocus: true }),
     deselectable: params.has("deselectable"),
     grouped: params.has("grouped"),
     required: params.has("required"),
