@@ -184,16 +184,15 @@ function createListboxKeyboard({
       return
     }
     const el = listbox.element(key)
-    // A press with Shift kept the browser from selecting text, and focus with
-    // it. With `virtualFocus`, the list keeps focus and points at the option.
-    const root = state.virtualFocus
-      ? (el?.closest<HTMLElement>('[role="listbox"]') ?? undefined)
-      : el
-    if (root && !root.contains(root.ownerDocument.activeElement)) {
-      root.focus({ preventScroll: true })
-    }
-    if (state.virtualFocus && el) {
-      listbox.highlight(key, { focus: false, event })
+    // With `virtualFocus`, the press already focused the list, which points
+    // at the option; focus stays wherever the press's handlers left it.
+    if (state.virtualFocus) {
+      if (el) {
+        listbox.highlight(key, { focus: false, event })
+      }
+    } else if (el && el.ownerDocument.activeElement !== el) {
+      // A press with Shift kept the browser from selecting text, and focus with it.
+      el.focus({ preventScroll: true })
     }
     const why = { reason: "item-press", event } as const
     if (!state.multiple) {
