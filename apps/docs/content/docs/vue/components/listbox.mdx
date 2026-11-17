@@ -128,6 +128,8 @@ Wrap an icon in `ListboxItemIcon` so screen readers and typeahead skip it. Add `
 
 Set `orientation="horizontal"` to move with Left and Right Arrow. Arrow keys normally wrap; set `:loop="false"` to stop at the ends, as this example does. Shift ranges never wrap.
 
+Set `virtual-focus` to keep focus on the listbox itself, which points at the highlighted option with `aria-activedescendant`: arrow keys, Home, End, typing and the pointer move the highlight, a press chooses without moving focus, and the listbox is the tab stop.
+
 The list reads `dir="rtl"` from the page or an ancestor, so Left Arrow moves to the next option in right-to-left text.
 
 <ComponentExample

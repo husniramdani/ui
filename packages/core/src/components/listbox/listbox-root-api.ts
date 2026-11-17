@@ -37,6 +37,8 @@ type ListboxStore = {
   activation: "automatic" | "manual"
   deselectable: boolean
   orientation: "horizontal" | "vertical"
+  // Focus stays on the listbox, which points at the highlighted option.
+  virtualFocus: boolean
   keepInView: boolean
   disabled: boolean
   formDisabled: boolean
@@ -81,6 +83,7 @@ function syncListboxStore(options: ListboxOptions<any, any>) {
       options.activation ?? (options.multiple ? "manual" : "automatic"),
     deselectable: !!options.deselectable,
     orientation: orientationOf(options.orientation, "vertical"),
+    virtualFocus: !!options.virtualFocus,
     keepInView: options.keepInView ?? true,
     disabled: !!options.disabled,
     readOnly: !!options.readOnly,
@@ -123,7 +126,7 @@ function listboxApiBody(
   const listbox = createListboxEngine(
     {
       store,
-      focus: "real",
+      focus: () => (store.get().virtualFocus ? "virtual" : "real"),
       items: () => store.get().items,
       toKey,
       filter: () => undefined,
@@ -294,14 +297,48 @@ function listboxApiBody(
 
   // The list itself got focus, like from a press on its padding, a Field
   // label, or an option that left the page. It hands focus to the tab stop.
+  // With `virtualFocus` it keeps focus, and highlights the tab stop instead.
   function focusStop() {
     focusInside = true
-    const { stop } = store.get()
+    const { stop, virtualFocus, highlighted } = store.get()
     const key = stop ?? stopKey()
+    if (virtualFocus) {
+      if (highlighted === null && key !== null) {
+        listbox.highlight(key, { focus: false })
+      }
+      return
+    }
     const el = key === null ? undefined : listbox.element(key)
     if (el?.isConnected) {
       el.focus({ preventScroll: true })
     }
+  }
+
+  // The pointer over an option highlights it, with `virtualFocus`, while the
+  // list has focus, so keys go on from there.
+  function hover(key: string, event: PointerEvent) {
+    const state = store.get()
+    if (
+      !state.virtualFocus ||
+      !focusInside ||
+      event.pointerType === "touch" ||
+      state.highlighted === key ||
+      listbox.isItemDisabled(key)
+    ) {
+      return
+    }
+    remembered = key
+    listbox.highlight(key, { focus: false, event })
+  }
+
+  // The option the listbox points at with `aria-activedescendant`.
+  function activeDescendant(state: ListboxStore) {
+    const { highlighted } = state
+    if (!state.virtualFocus || highlighted === null) {
+      return undefined
+    }
+    const el = listbox.element(highlighted)
+    return el?.isConnected && el.id ? el.id : undefined
   }
 
   // Focus left the list. An option that left the page, or moved within it,
@@ -388,6 +425,8 @@ function listboxApiBody(
       claim: createClaim(),
       focused,
       focusStop,
+      hover,
+      activeDescendant,
       blurred,
       onKeyDown: keyboard.onKeyDown,
       press: keyboard.press,
