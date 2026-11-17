@@ -98,6 +98,7 @@ function selectOptions() {
     required: params.has("required"),
     readOnly: params.has("readonly"),
     disabled: params.has("disabled"),
+    ...(params.has("virtual-focus") && { virtualFocus: true }),
     ...(params.has("open") && { defaultOpen: true }),
     ...(modal && { modal: modal === "true" }),
     align: params.has("align"),

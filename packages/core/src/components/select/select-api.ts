@@ -78,6 +78,8 @@ type SelectState = PopupState & {
   searchable: boolean
   // Real focus moved into the list for a touch screen reader, instead of staying in the search field.
   focusInList: boolean
+  // Focus stays on the trigger while the list is open, which points at the highlighted item.
+  virtualFocus: boolean
   status: AsyncOptionsStatus
   // Counts items mounting, so parts that depend on the list update.
   mounts: number
@@ -101,6 +103,11 @@ type Show = {
   focus?: InitialHighlight
   signal?: AbortSignal
 }
+
+// Focus stays outside the list, in the search field or on the trigger, while
+// arrows move the highlight. A touch screen reader gets real focus in the list.
+const virtual = (state: SelectState) =>
+  (state.searchable || state.virtualFocus) && !state.focusInList
 
 function initialSelectState(options: SelectOptions<any, any>): SelectState {
   const empty = () => (options.multiple ? [] : null)
@@ -136,6 +143,7 @@ function initialSelectState(options: SelectOptions<any, any>): SelectState {
     query: options.query ?? options.defaultQuery ?? "",
     searchable: false,
     focusInList: false,
+    virtualFocus: !!options.virtualFocus,
     status: options.status ?? "idle",
     mounts: 0,
     settled: false,
@@ -151,6 +159,7 @@ function syncSelectState(options: SelectOptions<any, any>) {
     disabled: !!options.disabled,
     readOnly: !!options.readOnly,
     required: !!options.required,
+    virtualFocus: !!options.virtualFocus,
     name: options.name,
     form: options.form,
     autoComplete: options.autoComplete,
@@ -190,8 +199,9 @@ function selectApiBody(
     triggerElement()?.focus(options)
   const contentElement = () => popup.element() ?? element("content")
   const searchElement = () => element("input") as HTMLInputElement | undefined
-  // Focus stays in the search field while there is one, unless a touch screen reader opened the list.
-  const searching = () => store.get().searchable && !store.get().focusInList
+  // Focus stays in the search field while there is one, or on the trigger with
+  // `virtualFocus`, unless a touch screen reader opened the list.
+  const searching = () => virtual(store.get())
   // The text the list is filtered by: the search field's, while the list is in the page.
   const filterQuery = () => {
     const { searchable, mounted, query } = store.get()
@@ -357,7 +367,11 @@ function selectApiBody(
       listbox.highlight(target.key, { focus: false })
     }
     if (searching()) {
-      return searchElement() ?? contentElement()
+      return (
+        searchElement() ??
+        (store.get().virtualFocus ? triggerElement() : undefined) ??
+        contentElement()
+      )
     }
     if (!target) {
       return contentElement()
@@ -597,7 +611,7 @@ function selectApiBody(
       isEmpty: (state: SelectState) =>
         (!!state.items || state.settled) && listbox.count() === 0,
       itemCount: () => listbox.count(),
-      // The id aria-activedescendant points at while focus stays in the search field.
+      // The id aria-activedescendant points at while focus stays in the search field or on the trigger.
       activeDescendant(state: SelectState) {
         const { highlighted } = state
         if (!state.open || state.focusInList || highlighted === null) {
@@ -690,4 +704,5 @@ export {
   type SelectState,
   type Show,
   syncSelectState,
+  virtual,
 }

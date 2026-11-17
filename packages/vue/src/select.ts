@@ -137,6 +137,7 @@ const Select = /* @__PURE__ */ renderless(
         (itemValue: any, value: any) => boolean
       >,
       loop: optionalBoolean,
+      virtualFocus: optionalBoolean,
       modal: {
         type: [Boolean, String] as PropType<boolean | "pointer">,
         default: undefined,

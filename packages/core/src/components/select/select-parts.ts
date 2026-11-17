@@ -58,7 +58,7 @@ import type {
   SelectValueProps,
   SelectValueState,
 } from "./select"
-import type { SelectApi, SelectState } from "./select-api"
+import { virtual, type SelectApi, type SelectState } from "./select-api"
 import { formatLabels, listOf } from "../../foundation/lists/listbox-value"
 import { selects } from "../../foundation/kernel/selects"
 import { direct, live } from "../../foundation/kernel/live"
@@ -161,6 +161,7 @@ const unreadByItems = {
   query: [],
   searchable: [],
   focusInList: [],
+  virtualFocus: [],
   status: [],
   mounts: [],
   settled: [],
@@ -175,8 +176,9 @@ const unreadByItems = {
   readonly never[]
 >
 
-// Focus stays in the search field while there is one, unless a touch screen reader moved it into the list.
-const searching = (state: SelectState) => state.searchable && !state.focusInList
+// Focus stays in the search field while there is one, or on the trigger with
+// `virtualFocus`, unless a touch screen reader moved it into the list.
+const searching = virtual
 
 const selectSlots = (slot: SlotFactory<SelectState, SelectApi>) => ({
   root: slot(rootPart<SelectState, SelectApi>({ focusOnSelfClick: true })),
@@ -191,7 +193,11 @@ const selectSlots = (slot: SlotFactory<SelectState, SelectApi>) => ({
   trigger: slot<TriggerProps, SelectTriggerState>({
     role: "combobox",
     focus: "native",
-    keys: ["ArrowDown", "ArrowUp", "Home", "End", "Enter", " ", "typeahead"],
+    // With `virtualFocus`, the open list's keys too, since focus stays here.
+    keys: (state) =>
+      state.virtualFocus
+        ? [...listStepKeys, "Home", "End", "Enter", " ", "Tab", "typeahead"]
+        : ["ArrowDown", "ArrowUp", "Home", "End", "Enter", " ", "typeahead"],
     props: {
       disabled: "boolean",
       // Internal: passed by renderers. Select has no `field` slot, so no element attribute either.
@@ -224,6 +230,12 @@ const selectSlots = (slot: SlotFactory<SelectState, SelectApi>) => ({
     },
     // Settling that there's no label drops the reference without rendering the trigger again.
     direct: direct(["aria-labelledby"]),
+    live: live((state, { api }) => ({
+      "aria-activedescendant":
+        state.virtualFocus && !state.searchable
+          ? api.internal.activeDescendant(state)
+          : undefined,
+    })),
     on: {
       keydown: (event, { api, el }) => api.internal.onTriggerKeyDown(event, el),
       pointerdown(event, { api, el, props, store }) {

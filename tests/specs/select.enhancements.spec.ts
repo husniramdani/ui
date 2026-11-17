@@ -99,3 +99,69 @@ test.describe("enhancements", { tag: "@enhancement" }, () => {
     await expect(trigger(page)).toContainText("Lemon")
   })
 })
+
+test.describe("focus on the trigger", { tag: "@enhancement" }, () => {
+  test("with virtualFocus, keys move the highlight while focus stays on the trigger, which points at it", async ({
+    page,
+    open,
+  }) => {
+    await open("select", { "virtual-focus": "", value: "cherry" })
+    await trigger(page).focus()
+    await page.keyboard.press("ArrowDown")
+    await expect(listbox(page)).toBeVisible()
+    await expect(trigger(page)).toBeFocused()
+    // The label of the option the trigger points at.
+    const pointsAt = () =>
+      trigger(page).evaluate((el) => {
+        const id = el.getAttribute("aria-activedescendant")
+        const item = id && el.ownerDocument.getElementById(id)
+        return item
+          ? (item.getAttribute("aria-label") ??
+              item.textContent?.replace("✓", "").trim())
+          : null
+      })
+    await expect.poll(pointsAt).toBe("Cherry")
+    // Grape is disabled, so the highlight skips it.
+    await page.keyboard.press("ArrowDown")
+    await expect.poll(pointsAt).toBe("Lemon")
+    await page.keyboard.press("End")
+    await expect.poll(pointsAt).toBe("Orange")
+    await page.keyboard.press("Home")
+    await expect.poll(pointsAt).toBe("Apple")
+    await page.keyboard.press("m")
+    await expect.poll(pointsAt).toBe("Mango")
+    await expect(trigger(page)).toBeFocused()
+    await page.keyboard.press("Enter")
+    await expect(listbox(page)).toBeHidden()
+    expect(await lastAction(page)).toBe("value:mango")
+    await expect(trigger(page)).toBeFocused()
+    await expect(trigger(page)).not.toHaveAttribute("aria-activedescendant")
+  })
+
+  test("with virtualFocus, Tab closes the list and moves on from the trigger", async ({
+    page,
+    open,
+  }) => {
+    await open("select", { "virtual-focus": "" })
+    await trigger(page).focus()
+    await page.keyboard.press("ArrowDown")
+    await expect(listbox(page)).toBeVisible()
+    await page.keyboard.press("Tab")
+    await expect(listbox(page)).toBeHidden()
+    // WebKit's Tab skips buttons by default, so focus may leave the page.
+    await expect(trigger(page)).not.toBeFocused()
+  })
+
+  test("with virtualFocus, a click on an item chooses it and keeps focus on the trigger", async ({
+    page,
+    open,
+  }) => {
+    await open("select", { "virtual-focus": "" })
+    await trigger(page).click()
+    await expect(trigger(page)).toBeFocused()
+    await option(page, "Banana").click()
+    await expect(listbox(page)).toBeHidden()
+    expect(await lastAction(page)).toBe("value:banana")
+    await expect(trigger(page)).toBeFocused()
+  })
+})

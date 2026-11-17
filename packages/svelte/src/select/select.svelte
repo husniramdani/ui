@@ -92,6 +92,7 @@ Picks one value, or several with `multiple`, from a list in a popup.
     itemToLabel,
     isItemEqualToValue,
     loop,
+    virtualFocus,
     modal,
     presentation,
     disabled,
@@ -141,6 +142,8 @@ Picks one value, or several with `multiple`, from a list in a popup.
     isItemEqualToValue?: (itemValue: T, value: T) => boolean
     /** Whether arrow keys wrap from the last item to the first. */
     loop?: boolean
+    /** Keeps focus on the trigger while the list is open, which points at the highlighted item. */
+    virtualFocus?: boolean
     /** Whether the page behind the list is inert, or only shielded from the pointer. */
     modal?: boolean | "pointer"
     /** How the list presents: a popover, a sheet, or `"auto"` for a sheet on small touch screens. */
@@ -210,6 +213,7 @@ Picks one value, or several with `multiple`, from a list in a popup.
     itemToLabel,
     isItemEqualToValue,
     loop,
+    virtualFocus,
     modal,
     presentation,
     disabled: disabled || field?.disabled(),
