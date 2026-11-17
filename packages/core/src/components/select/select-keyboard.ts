@@ -37,7 +37,11 @@ function createSelectKeyboard({
   listbox: Listbox
   selection: ValueSelection
   show: (options: Show) => unknown
-  hide: (options: { reason: SelectOpenChangeReason; event?: Event }) => void
+  hide: (options: {
+    reason: SelectOpenChangeReason
+    event?: Event
+    focus?: boolean
+  }) => void
   choose: (key: string, event?: Event) => void
   setValue: (
     value: unknown,
@@ -76,7 +80,12 @@ function createSelectKeyboard({
     event: KeyboardEvent,
     trigger: HTMLElement | undefined
   ) {
-    if (store.get().open) {
+    const { open, virtualFocus, searchable, focusInList } = store.get()
+    if (open) {
+      // With `virtualFocus`, focus stays here and the open list takes the keys.
+      if (virtualFocus && !searchable && !focusInList) {
+        onListKeyDown(event, trigger)
+      }
       return
     }
     if (event.key === " " && listbox.typing()) {
@@ -110,6 +119,12 @@ function createSelectKeyboard({
     if (event.target === searchElement()) {
       return onSearchKeyDown(event)
     }
+    onListKeyDown(event)
+  }
+
+  // Keys for the open list, from an item, or from the trigger with
+  // `virtualFocus`. Tab from the trigger closes the list and lets focus move on.
+  function onListKeyDown(event: KeyboardEvent, trigger?: HTMLElement) {
     const { highlighted } = store.get()
     if (event.altKey && event.key === "ArrowDown") {
       return
@@ -123,6 +138,9 @@ function createSelectKeyboard({
     }
     switch (event.key) {
       case "Tab":
+        if (trigger) {
+          return hide({ reason: "focus-out", event, focus: false })
+        }
         return popupKeyDown(event)
       case "Enter":
       case " ":

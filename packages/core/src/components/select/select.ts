@@ -321,6 +321,11 @@ type SelectSharedOptions<T> = PortalProps & {
    */
   loop?: boolean
   /**
+   * Keeps focus on the trigger while the list is open, as on a native select: arrow keys, Home, End and typing move the highlight, and the trigger points at the highlighted item with `aria-activedescendant`. A search field in the list still takes focus.
+   * @defaultValue false
+   */
+  virtualFocus?: boolean
+  /**
    * `"pointer"`: an outside press only closes the list. `true`: also locks scroll and makes the rest of the page inert. `false`: outside presses reach what they hit.
    * @defaultValue "pointer", or true while it presents as a sheet
    */
@@ -620,6 +625,7 @@ const selectPrimitive = /* @__PURE__ */ definePrimitive({
     isItemEqualToValue: "value",
     onHighlight: "callback",
     loop: "boolean",
+    virtualFocus: "boolean",
     modal: pointerModalAttribute,
     presentation: "string",
     disabled: "boolean",

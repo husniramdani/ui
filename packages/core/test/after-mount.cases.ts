@@ -783,6 +783,7 @@ const cases: Case[] = [
       "value.maxLabels": [1, 2],
       "value.text": [false, true],
       "content.alignItemWithTrigger": [true, false],
+      virtualFocus: [false, true],
       ...placed,
     },
     skip: {

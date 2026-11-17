@@ -96,6 +96,9 @@ async function render(root: HTMLElement, data = false) {
   if (options.readOnly) {
     select.setAttribute("read-only", "")
   }
+  if (options.virtualFocus) {
+    select.setAttribute("virtual-focus", "")
+  }
   if (options.defaultOpen) {
     select.setAttribute("default-open", "")
   }
