@@ -1,3 +1,6 @@
+// Modified by Husni Ramdani in the fork husniramdani/ui, 2026: adds the select option virtualFocus, which keeps focus on the trigger (#15).
+// Fork of UI SDK (vercel-labs/ui), Apache-2.0. See scripts/stylebase/CHANGES.md.
+
 // Select's state and API: opening and closing, choosing items, the value and
 // its labels, and what the form asks of it.
 import { type AsyncOptionsStatus } from "../../foundation/lists/async-options"

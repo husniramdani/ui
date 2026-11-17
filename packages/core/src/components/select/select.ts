@@ -1,3 +1,6 @@
+// Modified by Husni Ramdani in the fork husniramdani/ui, 2026: adds the select option virtualFocus, which keeps focus on the trigger (#15).
+// Fork of UI SDK (vercel-labs/ui), Apache-2.0. See scripts/stylebase/CHANGES.md.
+
 // Select: a button that opens a list of options and shows the chosen one,
 // like a native <select>. This module is the public API and assembles the
 // primitive. State and the API live in select-api.ts, keys and pointer

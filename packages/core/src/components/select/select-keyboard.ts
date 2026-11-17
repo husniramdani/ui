@@ -1,3 +1,6 @@
+// Modified by Husni Ramdani in the fork husniramdani/ui, 2026: adds the select option virtualFocus, which keeps focus on the trigger (#15).
+// Fork of UI SDK (vercel-labs/ui), Apache-2.0. See scripts/stylebase/CHANGES.md.
+
 // Select's keyboard and pointer input: keys on the closed trigger, including
 // typeahead that selects like a native select, keys in the open list and in
 // its search field, and a press on the trigger that drags or holds to an item
