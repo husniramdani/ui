@@ -1,3 +1,6 @@
+// Modified by Husni Ramdani in the fork husniramdani/ui, 2026: leaves focus to a press's handlers with virtualFocus (#20).
+// Fork of UI SDK (vercel-labs/ui), Apache-2.0. See scripts/stylebase/CHANGES.md.
+
 // Listbox's parts and the attributes they carry.
 import { dev } from "#dev"
 import { itemIconPart, optionIcon } from "../../foundation/lists/item-icon"
@@ -229,9 +232,16 @@ const listboxSlots = (slot: SlotFactory<ListboxStore, ListboxApi>) => ({
         }
       },
     },
-    press({ api, key, store }, event) {
+    // With `virtualFocus`, a press focuses the list, unless the press's own
+    // handlers moved focus elsewhere, like a menu closing back to its trigger.
+    press({ api, key, store, el }, event) {
       if (store.get().virtualFocus) {
-        api.internal.focusStop()
+        const doc = el?.ownerDocument
+        const active = doc?.activeElement
+        const list = el?.closest('[role="listbox"]')
+        if (!active || active === doc.body || list?.contains(active)) {
+          api.internal.focusStop()
+        }
         api.internal.highlightVirtually(key, event)
       }
       api.internal.press(key, event)

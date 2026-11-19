@@ -84,3 +84,17 @@ test("without it, focus moves onto the options", async () => {
   expect(document.activeElement).toBe(view.part("item", "c"))
   expect(root.hasAttribute("aria-activedescendant")).toBe(false)
 })
+
+test("a press leaves focus where the press's own handlers put it", async () => {
+  const { view, root } = setup()
+  root.focus()
+  await view.settle()
+  const elsewhere = document.body.appendChild(document.createElement("button"))
+  const move = () => elsewhere.focus()
+  document.addEventListener("click", move, true)
+  view.part("item", "c")!.click()
+  document.removeEventListener("click", move, true)
+  await view.settle()
+  expect(view.api.getValue()).toBe("c")
+  expect(document.activeElement).toBe(elsewhere)
+})
