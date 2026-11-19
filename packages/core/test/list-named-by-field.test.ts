@@ -53,3 +53,17 @@ for (const [name, view] of Object.entries(views)) {
     )
   })
 }
+
+// Modified by Husni Ramdani in the fork husniramdani/ui, 2026 (#2).
+test("a combobox list takes the text of a <label> without an id", async () => {
+  const mounted = views.combobox(`<input>`)
+  mounts.push(mounted)
+  const label = document.createElement("label")
+  label.htmlFor = mounted.part("input")!.id
+  label.textContent = "Framework"
+  document.body.prepend(label)
+  await new Promise((resolve) => setTimeout(resolve, 20))
+  const list = mounted.part("list")!
+  expect(list.getAttribute("aria-label")).toBe("Framework")
+  expect(list.hasAttribute("aria-labelledby")).toBe(false)
+})

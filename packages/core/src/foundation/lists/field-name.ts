@@ -1,3 +1,6 @@
+// Modified by Husni Ramdani in the fork husniramdani/ui, 2026: names a list by a field's label that has no id (#2).
+// Fork of UI SDK (vercel-labs/ui), Apache-2.0. See scripts/stylebase/CHANGES.md.
+
 import { later } from "../kernel/bound-keys"
 import type { Store } from "../kernel/store"
 
@@ -11,13 +14,19 @@ function fieldNameOf(el: HTMLElement, id: string) {
     return { labelledBy }
   }
   const labels = [...((el as HTMLInputElement).labels ?? [])]
-    .map((label) => label.id)
-    .filter(Boolean)
-  if (labels.length) {
-    return { labelledBy: labels.join(" ") }
+  if (labels.length && labels.every((label) => label.id)) {
+    return { labelledBy: labels.map((label) => label.id).join(" ") }
   }
   const label = el.getAttribute("aria-label")
-  return label ? { label } : null
+  if (label) {
+    return { label }
+  }
+  // A `<label>` without an id can't be pointed at, so the list takes its text.
+  const text = labels
+    .map((label) => label.textContent?.trim())
+    .filter(Boolean)
+    .join(" ")
+  return text ? { label: text } : null
 }
 
 // A microtask later, like the flags parts set when they bind: in Vue a list
