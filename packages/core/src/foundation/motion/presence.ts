@@ -1,3 +1,6 @@
+// Modified by Husni Ramdani in the fork husniramdani/ui, 2026: resets an exit only once, so stopping a finished exit keeps the owner's inert (#23).
+// Fork of UI SDK (vercel-labs/ui), Apache-2.0. See scripts/stylebase/CHANGES.md.
+
 // Enter and exit animations without a framework. The popup gets
 // data-starting-style for its first frame and data-ending-style while it
 // animates out. Unmounting waits for every running animation, with a timeout
@@ -177,7 +180,14 @@ function animateOut(el: HTMLElement, done: () => void) {
   const owner = Observer && new Observer(() => (written = true))
   owner?.observe(el, { attributeFilter: ["inert"] })
   let frame = 0
+  let isReset = false
+  // Stopping after the exit has ended resets again, and putting back the
+  // earlier `inert` then would undo what the owner has written since.
   const reset = () => {
+    if (isReset) {
+      return
+    }
+    isReset = true
     cancelAnimationFrame(frame)
     pendingResets.delete(el)
     el.removeAttribute("data-ending-style")

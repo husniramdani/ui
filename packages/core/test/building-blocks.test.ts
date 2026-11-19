@@ -659,6 +659,17 @@ describe("animateOut", () => {
     await nextFrames(3)
     expect(kept.hasAttribute("inert")).toBe(true)
   })
+
+  test("stopping an exit that has ended leaves inert to the owner", async () => {
+    const el = animating()
+    el.setAttribute("inert", "")
+    const stop = animateOut(el, () => {})
+    await nextFrames(3)
+    // The owner shows the element again, then stops the finished exit.
+    el.removeAttribute("inert")
+    stop()
+    expect(el.hasAttribute("inert")).toBe(false)
+  })
 })
 
 async function nextFrames(count: number) {
